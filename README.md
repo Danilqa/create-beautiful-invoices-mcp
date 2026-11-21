@@ -1,3 +1,5 @@
+<img src=".github/assets/banner.png" alt="Three invoices made by create-beautiful-invoices-mcp, in pounds, euros and yen" width="100%" />
+
 # create-beautiful-invoices-mcp
 
 > 🧾 An MCP server that creates beautiful, real PDF invoices. Ask your AI assistant for an invoice and get a PDF on disk.
