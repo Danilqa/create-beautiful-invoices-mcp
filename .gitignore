@@ -5,3 +5,5 @@ coverage/
 .planning/
 packages/mcp-server/README.md
 packages/mcp-server/LICENSE
+.vercel/
+.env*

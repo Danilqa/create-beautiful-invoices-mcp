@@ -46,13 +46,18 @@ const KEBAB_CASE_FILES = {
 };
 
 const NO_MCP_IN_INVOICE = {
-  regex: String.raw`^(@modelcontextprotocol/|create-beautiful-invoices-mcp(/|$)|(\.\./)+mcp-server/)`,
+  regex: String.raw`^(@modelcontextprotocol/|(mcp-handler|mcp-http|create-beautiful-invoices-mcp)(/|$)|(\.\./)+mcp-(server|http)/)`,
   message: 'invoice knows nothing about MCP, so any other app can render invoices with it.',
 };
 
 const INVOICE_BY_NAME = {
   regex: String.raw`^(\.\./)+invoice/`,
   message: "Import the invoice package by name, such as 'invoice/render', not by a relative path.",
+};
+
+const NO_OTHER_SERVER = {
+  regex: String.raw`^(create-beautiful-invoices-mcp|mcp-http)(/|$)|^(\.\./)+(mcp-server|mcp-http)/`,
+  message: 'mcp-server and mcp-http share code through the invoice package, never each other.',
 };
 
 const ONLY_TESTS_IMPORT_MOCKS = {
@@ -67,7 +72,7 @@ const restrictImports = (files, ignores, ...patterns) => ({
 });
 
 export default defineConfig(
-  globalIgnores(['**/dist/', '**/coverage/', '.planning/']),
+  globalIgnores(['**/dist/', '**/coverage/', '**/.vercel/', '.planning/']),
   {
     linterOptions: {
       noInlineConfig: true,
@@ -149,11 +154,17 @@ export default defineConfig(
     ONLY_TESTS_IMPORT_MOCKS,
   ),
   restrictImports(
-    ['packages/mcp-server/**/*.{ts,tsx}'],
+    ['packages/{mcp-server,mcp-http}/**/*.{ts,tsx}'],
     ['**/*.test.{ts,tsx}'],
     INVOICE_BY_NAME,
+    NO_OTHER_SERVER,
     ONLY_TESTS_IMPORT_MOCKS,
   ),
   restrictImports(['packages/invoice/**/*.test.{ts,tsx}'], [], NO_MCP_IN_INVOICE),
-  restrictImports(['packages/mcp-server/**/*.test.{ts,tsx}'], [], INVOICE_BY_NAME),
+  restrictImports(
+    ['packages/{mcp-server,mcp-http}/**/*.test.{ts,tsx}'],
+    [],
+    INVOICE_BY_NAME,
+    NO_OTHER_SERVER,
+  ),
 );
