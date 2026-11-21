@@ -1,0 +1,27 @@
+{
+  "name": "mcp-http",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-output.ts",
+    "smoke": "node scripts/smoke-output.js",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "invoice": "workspace:*",
+    "mcp-handler": "2.4.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "esbuild": "0.28.2",
+    "ts-pattern": "catalog:",
+    "vitest": "catalog:"
+  }
+}

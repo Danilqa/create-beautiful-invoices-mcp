@@ -26,3 +26,7 @@ export const formatLongDate = (isoDate: string) =>
     year: 'numeric',
     timeZone: 'UTC',
   });
+
+// Safe as a file name on any OS: invoice-2026-US-07 for 2026/US-07.
+export const toInvoiceFileStem = (invoiceNumber: string) =>
+  `invoice-${invoiceNumber.replaceAll(/[^\w.-]+/g, '-')}`;

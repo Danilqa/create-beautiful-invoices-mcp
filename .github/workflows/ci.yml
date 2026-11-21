@@ -55,6 +55,19 @@ jobs:
       - name: Run the unit tests of every package
         run: pnpm test
 
+  vercel-output:
+    name: ▲ Vercel output
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+      - name: Build the functions of the hosted server
+        run: pnpm --filter mcp-http build
+      - name: Create an invoice with the built functions
+        run: pnpm --filter mcp-http smoke
+
   npm-package:
     name: 📦 npm package
     runs-on: ubuntu-latest
