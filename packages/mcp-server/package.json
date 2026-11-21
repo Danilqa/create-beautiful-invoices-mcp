@@ -1,0 +1,56 @@
+{
+  "name": "create-beautiful-invoices-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server that creates beautiful, real PDF invoices.",
+  "keywords": [
+    "invoice",
+    "invoices",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "pdf"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Danilqa/create-beautiful-invoices-mcp#readme",
+  "bugs": "https://github.com/Danilqa/create-beautiful-invoices-mcp/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Danilqa/create-beautiful-invoices-mcp.git"
+  },
+  "mcpName": "io.github.Danilqa/create-beautiful-invoices-mcp",
+  "bin": {
+    "create-beautiful-invoices-mcp": "bin/create-beautiful-invoices-mcp.js"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "build": "esbuild src/main.ts --bundle --platform=node --format=esm --target=node24 --jsx=automatic --external:@fontsource/inter --external:@modelcontextprotocol/server --external:@react-pdf/renderer --external:react --external:ts-pattern --external:zod --outfile=dist/main.js",
+    "prepack": "pnpm run build && cp ../../README.md ../../LICENSE ."
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@modelcontextprotocol/server": "2.4.0",
+    "@react-pdf/renderer": "4.9.0",
+    "react": "19.3.1",
+    "ts-pattern": "5.9.2",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "esbuild": "0.28.2",
+    "invoice": "workspace:*",
+    "tsx": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -1,0 +1,52 @@
+# AGENTS.md
+
+create-beautiful-invoices-mcp is an MCP server that renders invoices to PDF. This repo is a pnpm workspace: the published server and the invoice package it renders with.
+
+## Packages
+
+| Package      | Description                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| `mcp-server` | `create-beautiful-invoices-mcp`, the only published package: the stdio MCP server and its `create_invoice` tool |
+| `invoice`    | The invoice domain: zod schemas, totals, formatting and the react-pdf document. It knows nothing about MCP      |
+
+## Package manager
+
+pnpm 12 and Node 24, with one lockfile at the root. Versions that several packages use live in the catalog in `pnpm-workspace.yaml`. A package imports another workspace package only after it declares it as `"<name>": "workspace:*"`.
+
+## Commands
+
+Run them from the repo root.
+
+```bash
+pnpm install
+pnpm validate   # format check, lint, typecheck and tests
+pnpm dev        # the server from source on stdio
+pnpm inspect    # the server from source in the MCP Inspector
+pnpm build      # packages/mcp-server/dist/main.js
+```
+
+To release, bump `version` in `packages/mcp-server/package.json` and both versions in `packages/mcp-server/server.json`, run `npm publish` in `packages/mcp-server`, then `mcp-publisher publish` there to list the new version in the MCP Registry. npm copies `package.json` as it is, so the `dependencies` of `mcp-server` keep exact versions instead of `catalog:`.
+
+`.github/workflows/ci.yml` runs each check of `pnpm validate` and the npm package check as parallel jobs on every PR. The npm package check installs the packed server in an empty project and creates an invoice with it through the MCP Inspector.
+
+`tsc` is TypeScript 7. typescript-eslint needs the JavaScript API that TypeScript 7 doesn't have, so `typescript` is TypeScript 6 under an alias, for ESLint only.
+
+## Architecture
+
+- `invoice` never imports `@modelcontextprotocol/*` or `mcp-server`, so any other app can render invoices with it. `mcp-server` imports it by name, such as `invoice/render`, never by a relative path.
+- Money is in minor units from `calculateTotals` on, so totals add up to the penny. The schema allows two decimals at most in prices and quantities.
+- The MCP SDK is v2: `McpServer` from `@modelcontextprotocol/server`, served by `serveStdio`, which speaks both the 2025 and the 2026 protocols. stdout carries the protocol, so the server never logs to it.
+- Tool errors, thrown or from input validation, reach the client as `isError` results.
+- `bin/create-beautiful-invoices-mcp.js` runs `src/main.ts` through tsx in a checkout and `dist/main.js` when installed from npm. esbuild bundles `invoice` and keeps the npm packages external, so a package that bundled code imports at runtime must be a `mcp-server` dependency and on the esbuild external list.
+- The fonts are the latin static weights of Inter from `@fontsource/inter`, resolved at runtime. Characters outside latin, and currency symbols other than £, € and $, would print as missing glyphs.
+
+## Code style
+
+ESLint enforces most of it, see `eslint.config.js`.
+
+- Very strict TypeScript: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and the rest in `tsconfig.json`, and typescript-eslint's `strictTypeChecked`.
+- ts-pattern `match(...).exhaustive()` instead of `switch`, or `===` on string-literal unions. No enums, no inline object types, no type assertions.
+- Named `interface`s, and props as a named `<Component>Props` interface.
+- kebab-case file names. Tests sit next to the code as `*.test.ts` and run with Vitest. Only tests import `mocks`.
+- Functions start with a verb. Boolean functions start with `check`.
+- One-line comments that say why, only where the code can't.
