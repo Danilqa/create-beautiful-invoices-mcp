@@ -1,8 +1,12 @@
+<img src=".github/assets/banner.png" alt="Three invoices made by create-beautiful-invoices-mcp, in pounds, euros and yen" width="100%" />
+
 # create-beautiful-invoices-mcp
 
 > 🧾 An MCP server that creates beautiful, real PDF invoices. Ask your AI assistant for an invoice and get a PDF on disk.
 
 The invoices use the design of [sample-invoice-generator](https://github.com/Danilqa/sample-invoice-generator): a large amount due, the parties and dates, line items, totals with VAT and bank transfer details, set in Inter on A4.
+
+📄 [See an example invoice](.github/assets/example-invoice.pdf), the one in front above.
 
 ## ⚡ Quickstart
 
