@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Danilqa/create-beautiful-invoices-mcp",
+  "title": "Beautiful invoices",
+  "description": "Creates beautiful, real PDF invoices with VAT and bank transfer details.",
+  "repository": {
+    "url": "https://github.com/Danilqa/create-beautiful-invoices-mcp",
+    "source": "github",
+    "subfolder": "packages/mcp-server"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "create-beautiful-invoices-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "INVOICES_DIR",
+          "description": "Folder the PDFs are saved to, ~/Invoices by default",
+          "isRequired": false,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}

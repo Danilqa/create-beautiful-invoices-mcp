@@ -1,0 +1,33 @@
+{
+  "name": "invoice",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": [
+    "./src/render.tsx"
+  ],
+  "type": "module",
+  "exports": {
+    "./schemas": "./src/schemas.ts",
+    "./types": "./src/types.ts",
+    "./totals": "./src/totals.ts",
+    "./format": "./src/format.ts",
+    "./render": "./src/render.tsx",
+    "./mocks": "./src/mocks.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@react-pdf/renderer": "catalog:",
+    "react": "catalog:",
+    "ts-pattern": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "unpdf": "2.2.1",
+    "vitest": "catalog:"
+  }
+}

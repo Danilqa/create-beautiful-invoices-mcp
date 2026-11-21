@@ -1,0 +1,34 @@
+{
+  "name": "create-beautiful-invoices-mcp-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx packages/mcp-server/src/main.ts",
+    "inspect": "mcp-inspector tsx packages/mcp-server/src/main.ts",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "build": "pnpm --filter create-beautiful-invoices-mcp run build"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.21.0",
+  "devDependencies": {
+    "@danilqa/eslint-plugin-ts-pattern": "0.0.4",
+    "@eslint/js": "10.0.1",
+    "@modelcontextprotocol/inspector": "2.16.0",
+    "@types/node": "26.6.6",
+    "eslint": "10.15.0",
+    "eslint-plugin-unicorn": "80.0.0",
+    "globals": "17.14.0",
+    "prettier": "3.10.1",
+    "tsx": "catalog:",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "typescript-eslint": "8.73.0",
+    "typescript7": "npm:typescript@7.0.2"
+  }
+}
