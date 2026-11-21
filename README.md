@@ -6,6 +6,8 @@
 
 The invoices use the design of [sample-invoice-generator](https://github.com/Danilqa/sample-invoice-generator): a large amount due, the parties and dates, line items, totals with VAT and bank transfer details, set in Inter on A4.
 
+📄 [See an example invoice](.github/assets/example-invoice.pdf), the one in front above.
+
 ## ⚡ Quickstart
 
 You need Node 24.
