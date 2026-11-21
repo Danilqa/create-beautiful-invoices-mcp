@@ -21,6 +21,12 @@
           "description": "Folder the PDFs are saved to, ~/Invoices by default",
           "isRequired": false,
           "format": "filepath"
+        },
+        {
+          "name": "INVOICE_DEFAULTS",
+          "description": "JSON file with the seller, payment, currency, tax and due days every invoice starts from",
+          "isRequired": false,
+          "format": "filepath"
         }
       ]
     }

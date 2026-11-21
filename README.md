@@ -39,19 +39,49 @@ Renders the invoice to a PDF, saves it to the invoices folder and returns its pa
 | Field                  | Description                                                                                                       |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `invoiceNumber`        | Unique number, also the payment reference                                                                         |
-| `issueDate`, `dueDate` | `YYYY-MM-DD`. The due date can't be before the issue date                                                         |
-| `currency`             | `GBP`, `EUR` or `USD`                                                                                             |
-| `seller`               | `name`, and optionally `address`, `email`, `phone` and `vatNumber`                                                |
+| `issueDate`, `dueDate` | `YYYY-MM-DD`. Today and 30 days later by default. The due date can't be before the issue date                     |
+| `currency`             | `GBP`, `EUR`, `USD`, `AUD`, `BRL`, `CAD`, `CHF`, `CNY`, `INR`, `JPY`, `KRW`, `NZD`, `RUB`, `SGD` or `ZAR`         |
+| `seller`               | `name`, and optionally `address`, `email`, `phone`, `taxNumber` and `logo`, an absolute path to a PNG or JPEG     |
 | `client`               | `name`, and optionally `address` and `email`                                                                      |
 | `items`                | At least one `{ description, quantity, unitPrice }`. `quantity` defaults to 1                                     |
-| `vatRate`              | VAT in percent, `0` by default, which leaves VAT off the invoice                                                  |
+| `discountRate`         | Discount on the subtotal in percent, taken off before tax                                                         |
+| `taxRate`, `taxLabel`  | Tax in percent and its name, `VAT` by default. Without a rate, the invoice has no tax                             |
+| `notes`                | Text under the totals, such as a PO number or a thank-you                                                         |
 | `payment`              | `uk-bank-transfer` with a sort code and account number, or `iban-transfer` with an IBAN and an optional SWIFT/BIC |
 
 ## ⚙️ Configuration
 
-| Variable       | Default      | Description                  |
-| -------------- | ------------ | ---------------------------- |
-| `INVOICES_DIR` | `~/Invoices` | Folder the PDFs are saved to |
+| Variable           | Default      | Description                                         |
+| ------------------ | ------------ | --------------------------------------------------- |
+| `INVOICES_DIR`     | `~/Invoices` | Folder the PDFs are saved to                        |
+| `INVOICE_DEFAULTS` |              | JSON file with the fields every invoice starts from |
+
+### Saved defaults
+
+Save what repeats in a JSON file and point `INVOICE_DEFAULTS` at it. The tool then asks only for the rest, such as the client and the items:
+
+```json
+{
+  "seller": {
+    "name": "Northwind Studio Ltd",
+    "address": "12 Hoxton Square\nLondon N1 6NU",
+    "email": "billing@northwind.studio",
+    "taxNumber": "GB123456789",
+    "logo": "/Users/you/Invoices/logo.png"
+  },
+  "payment": {
+    "method": "uk-bank-transfer",
+    "accountName": "Northwind Studio Ltd",
+    "sortCode": "20-00-00",
+    "accountNumber": "55779911"
+  },
+  "currency": "GBP",
+  "taxRate": 20,
+  "dueInDays": 14
+}
+```
+
+The file can set `seller`, `payment`, `currency`, `taxRate`, `taxLabel`, `notes` and `dueInDays`. A field given in a call replaces its default as a whole. The server doesn't start with a file it can't read, so a typo never turns into a wrong invoice.
 
 ## 🧑‍💻 Development
 
