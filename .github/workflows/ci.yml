@@ -115,7 +115,7 @@ jobs:
           pnpm exec mcp-inspector --cli -e INVOICES_DIR="$invoices" \
             node "$RUNNER_TEMP/project/node_modules/create-beautiful-invoices-mcp/bin/create-beautiful-invoices-mcp.js" \
             --method tools/call --tool-name create_invoice \
-            --tool-arg invoiceNumber=INV-001 issueDate=2026-11-21 dueDate=2026-12-21 currency=EUR vatRate=20 \
+            --tool-arg invoiceNumber=INV-001 issueDate=2026-11-21 dueDate=2026-12-21 currency=EUR taxRate=20 \
             --tool-arg 'seller={"name":"Northwind Studio"}' 'client={"name":"Fabrikam"}' \
             --tool-arg 'items=[{"description":"Design","quantity":2,"unitPrice":500}]' \
             --tool-arg 'payment={"method":"iban-transfer","accountName":"Northwind Studio","iban":"DE89 3704 0044 0532 0130 00"}' \

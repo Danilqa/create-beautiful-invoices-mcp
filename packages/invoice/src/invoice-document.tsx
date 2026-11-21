@@ -1,5 +1,7 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { FONT_FAMILIES } from './fonts';
 import { formatLongDate, formatMoney } from './format';
+import type { Logo } from './logo';
 import { toPaymentFields } from './payment';
 import { calculateTotals } from './totals';
 import type { Invoice } from './types';
@@ -7,10 +9,11 @@ import type { Invoice } from './types';
 const INK = '#0a0a0a';
 const MUTED = '#737373';
 const HAIRLINE = '#e5e5e5';
+const DEFAULT_TAX_LABEL = 'VAT';
 
 const styles = StyleSheet.create({
   page: {
-    fontFamily: 'Inter',
+    fontFamily: FONT_FAMILIES,
     fontSize: 9,
     lineHeight: 1.45,
     color: INK,
@@ -18,7 +21,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 52,
     paddingBottom: 72,
   },
-  header: { flexDirection: 'row', justifyContent: 'space-between' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  logo: { maxWidth: 160, maxHeight: 32, objectFit: 'contain' },
   sellerName: { fontWeight: 600 },
   muted: { color: MUTED },
   amountLabel: { marginTop: 48, color: MUTED },
@@ -61,6 +65,7 @@ const styles = StyleSheet.create({
     color: MUTED,
   },
   grandTotal: { fontWeight: 600 },
+  notes: { marginTop: 32 },
   payment: { marginTop: 32, backgroundColor: '#f5f5f5', borderRadius: 8, padding: 16 },
   paymentTitle: { fontWeight: 600 },
   paymentFields: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 },
@@ -79,11 +84,13 @@ const Lines = ({ lines }: LinesProps) =>
 
 export interface InvoiceDocumentProps {
   invoice: Invoice;
+  logo: Logo | undefined;
 }
 
-export const InvoiceDocument = ({ invoice }: InvoiceDocumentProps) => {
+export const InvoiceDocument = ({ invoice, logo }: InvoiceDocumentProps) => {
   const { seller, client, currency } = invoice;
-  const { lines, subtotalMinor, vatMinor, totalMinor } = calculateTotals(invoice);
+  const { lines, subtotalMinor, discountMinor, taxMinor, totalMinor } = calculateTotals(invoice);
+  const taxLabel = invoice.taxLabel ?? DEFAULT_TAX_LABEL;
   const toMoney = (amountMinor: number) => formatMoney(amountMinor, currency);
   const issueDate = formatLongDate(invoice.issueDate);
   const dueDate = formatLongDate(invoice.dueDate);
@@ -92,7 +99,11 @@ export const InvoiceDocument = ({ invoice }: InvoiceDocumentProps) => {
     <Document title={`Invoice ${invoice.invoiceNumber}`} author={seller.name}>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.sellerName}>{seller.name}</Text>
+          {logo === undefined ? (
+            <Text style={styles.sellerName}>{seller.name}</Text>
+          ) : (
+            <Image style={styles.logo} src={logo} />
+          )}
           <Text style={styles.muted}>Invoice {invoice.invoiceNumber}</Text>
         </View>
 
@@ -113,7 +124,7 @@ export const InvoiceDocument = ({ invoice }: InvoiceDocumentProps) => {
                 seller.address,
                 seller.email,
                 seller.phone,
-                seller.vatNumber === undefined ? undefined : `VAT ${seller.vatNumber}`,
+                seller.taxNumber === undefined ? undefined : `${taxLabel} ${seller.taxNumber}`,
               ]}
             />
           </View>
@@ -147,10 +158,18 @@ export const InvoiceDocument = ({ invoice }: InvoiceDocumentProps) => {
             <Text>Subtotal</Text>
             <Text>{toMoney(subtotalMinor)}</Text>
           </View>
-          {invoice.vatRate > 0 && (
+          {invoice.discountRate !== undefined && invoice.discountRate > 0 && (
             <View style={styles.subtotalRow}>
-              <Text>VAT ({invoice.vatRate}%)</Text>
-              <Text>{toMoney(vatMinor)}</Text>
+              <Text>Discount ({invoice.discountRate}%)</Text>
+              <Text>−{toMoney(discountMinor)}</Text>
+            </View>
+          )}
+          {invoice.taxRate !== undefined && invoice.taxRate > 0 && (
+            <View style={styles.subtotalRow}>
+              <Text>
+                {taxLabel} ({invoice.taxRate}%)
+              </Text>
+              <Text>{toMoney(taxMinor)}</Text>
             </View>
           )}
           <View style={[styles.totalRow, styles.grandTotal]}>
@@ -158,6 +177,13 @@ export const InvoiceDocument = ({ invoice }: InvoiceDocumentProps) => {
             <Text>{toMoney(totalMinor)}</Text>
           </View>
         </View>
+
+        {invoice.notes !== undefined && (
+          <View style={styles.notes}>
+            <Text style={styles.label}>Notes</Text>
+            <Lines lines={[invoice.notes]} />
+          </View>
+        )}
 
         <View style={styles.payment} wrap={false}>
           <Text style={styles.paymentTitle}>Pay by bank transfer</Text>

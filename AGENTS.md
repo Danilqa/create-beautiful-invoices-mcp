@@ -34,11 +34,12 @@ To release, bump `version` in `packages/mcp-server/package.json` and both versio
 ## Architecture
 
 - `invoice` never imports `@modelcontextprotocol/*` or `mcp-server`, so any other app can render invoices with it. `mcp-server` imports it by name, such as `invoice/render`, never by a relative path.
-- Money is in minor units from `calculateTotals` on, so totals add up to the penny. The schema allows two decimals at most in prices and quantities.
+- Money is in minor units from `calculateTotals` on, so totals add up to the penny. The schema allows two decimals at most in prices and quantities, and none in prices of a currency without decimals, such as JPY. The discount comes off the subtotal before tax.
 - The MCP SDK is v2: `McpServer` from `@modelcontextprotocol/server`, served by `serveStdio`, which speaks both the 2025 and the 2026 protocols. stdout carries the protocol, so the server never logs to it.
 - Tool errors, thrown or from input validation, reach the client as `isError` results.
 - `bin/create-beautiful-invoices-mcp.js` runs `src/main.ts` through tsx in a checkout and `dist/main.js` when installed from npm. esbuild bundles `invoice` and keeps the npm packages external, so a package that bundled code imports at runtime must be a `mcp-server` dependency and on the esbuild external list.
-- The fonts are the latin static weights of Inter from `@fontsource/inter`, resolved at runtime. Characters outside latin, and currency symbols other than £, € and $, would print as missing glyphs.
+- The fonts are the static weights of every Inter subset from `@fontsource/inter`, resolved at runtime. Each subset is a family of its own, and react-pdf takes a glyph missing in one from the next, so latin, latin-ext, Cyrillic, Greek and Vietnamese all print. Inter has no CJK, Arabic or Hebrew glyphs, and the currencies are limited to the ones whose symbols it has.
+- The `invoice` schema has no defaults beyond an item's quantity. The server fills in the saved defaults from `INVOICE_DEFAULTS` and the dates, then validates the whole invoice with `invoiceSchema`, so its input schema asks only for what the defaults leave out.
 
 ## Code style
 

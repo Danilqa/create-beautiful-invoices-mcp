@@ -15,6 +15,7 @@ export interface PricedLine extends LineItem {
 export interface Totals {
   lines: PricedLine[];
   subtotalMinor: number;
-  vatMinor: number;
+  discountMinor: number;
+  taxMinor: number;
   totalMinor: number;
 }

@@ -1,15 +1,22 @@
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
+import type { InvoiceDefaults } from './defaults';
+import { EMPTY_DEFAULTS, readDefaults } from './defaults';
 
 export interface ServerConfig {
   invoicesDir: string;
+  defaults: InvoiceDefaults;
 }
 
-export const readConfig = (env: NodeJS.ProcessEnv): ServerConfig => {
-  const invoicesDir = env['INVOICES_DIR'];
+const readVariable = (env: NodeJS.ProcessEnv, name: string) => {
+  const value = env[name];
+  return value === '' ? undefined : value;
+};
+
+export const readConfig = async (env: NodeJS.ProcessEnv): Promise<ServerConfig> => {
+  const defaultsPath = readVariable(env, 'INVOICE_DEFAULTS');
   return {
-    invoicesDir: resolve(
-      invoicesDir === undefined || invoicesDir === '' ? join(homedir(), 'Invoices') : invoicesDir,
-    ),
+    invoicesDir: resolve(readVariable(env, 'INVOICES_DIR') ?? join(homedir(), 'Invoices')),
+    defaults: defaultsPath === undefined ? EMPTY_DEFAULTS : await readDefaults(defaultsPath),
   };
 };

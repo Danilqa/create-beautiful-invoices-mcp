@@ -1,16 +1,24 @@
+import { toCurrencyDigits } from './format';
 import type { Invoice, Totals } from './types';
 
-const MINOR_UNITS = 100;
-
-// The schema allows two decimals at most, so rounding only drops float noise.
-const toMinor = (value: number) => Math.round(value * MINOR_UNITS);
+const takePercent = (amountMinor: number, percent: number | undefined) =>
+  Math.round((amountMinor * (percent ?? 0)) / 100);
 
 export const calculateTotals = (invoice: Invoice): Totals => {
+  const minorUnits = 10 ** toCurrencyDigits(invoice.currency);
   const lines = invoice.items.map(item => {
-    const unitPriceMinor = toMinor(item.unitPrice);
+    // The schema allows the currency's decimals at most, so rounding only drops float noise.
+    const unitPriceMinor = Math.round(item.unitPrice * minorUnits);
     return { ...item, unitPriceMinor, amountMinor: Math.round(item.quantity * unitPriceMinor) };
   });
   const subtotalMinor = lines.reduce((sum, line) => sum + line.amountMinor, 0);
-  const vatMinor = Math.round((subtotalMinor * invoice.vatRate) / 100);
-  return { lines, subtotalMinor, vatMinor, totalMinor: subtotalMinor + vatMinor };
+  const discountMinor = takePercent(subtotalMinor, invoice.discountRate);
+  const taxMinor = takePercent(subtotalMinor - discountMinor, invoice.taxRate);
+  return {
+    lines,
+    subtotalMinor,
+    discountMinor,
+    taxMinor,
+    totalMinor: subtotalMinor - discountMinor + taxMinor,
+  };
 };
