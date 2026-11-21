@@ -8,7 +8,7 @@ import { downloadInvoice } from './download-invoice';
 import { createInvoiceMcpHandler } from './mcp-handler';
 
 const NOW = new Date('2026-11-05T09:00:00Z');
-const CONFIG: HttpConfig = { linkSecret: 'test-secret', now: () => NOW };
+const CONFIG: HttpConfig = { linkSecret: 'test-secret', publicUrl: undefined, now: () => NOW };
 
 const { invoiceNumber, currency, seller, client: billedTo, items, taxRate, payment } = invoiceMock;
 const invoice = { invoiceNumber, currency, seller, client: billedTo, items, taxRate, payment };
@@ -102,6 +102,16 @@ describe('the hosted create_invoice', () => {
     },
   );
 
+  it('links under the public URL when a proxy serves the server under a path', async () => {
+    const result = await (
+      await connect('legacy', { ...CONFIG, publicUrl: 'https://www.nothing-fancy.space/invoice' })
+    ).callTool({ name: 'create_invoice', arguments: invoice });
+
+    expect(toUrl(result)).toMatch(
+      /^https:\/\/www\.nothing-fancy\.space\/invoice\/api\/invoice\?token=[\w-]+$/,
+    );
+  });
+
   it('returns an error for an invalid invoice', async () => {
     const result = await (
       await connect('legacy')
@@ -116,7 +126,7 @@ describe('the hosted create_invoice', () => {
 
   it('returns an error without a secret on the server', async () => {
     const result = await (
-      await connect('legacy', { linkSecret: undefined, now: () => NOW })
+      await connect('legacy', { ...CONFIG, linkSecret: undefined })
     ).callTool({ name: 'create_invoice', arguments: invoice });
 
     expect(result.isError).toBe(true);

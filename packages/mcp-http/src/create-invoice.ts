@@ -60,7 +60,7 @@ export const registerCreateInvoice = (server: McpServer, config: HttpConfig) => 
       const invoice = result.data;
 
       const { token, expiresAt } = sealInvoice(invoice, requireLinkSecret(config), now);
-      const url = new URL(INVOICE_PATH, getPublicOrigin(request));
+      const url = new URL(`${config.publicUrl ?? getPublicOrigin(request)}${INVOICE_PATH}`);
       url.searchParams.set('token', token);
       const total = formatMoney(calculateTotals(invoice).totalMinor, invoice.currency);
       return {

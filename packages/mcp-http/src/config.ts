@@ -1,10 +1,18 @@
 export interface HttpConfig {
   linkSecret: string | undefined;
+  // Where clients reach the server when a proxy serves it under a path, such as https://www.nothing-fancy.space/invoice.
+  publicUrl: string | undefined;
   now: () => Date;
 }
 
+const readVariable = (env: NodeJS.ProcessEnv, name: string) => {
+  const value = env[name];
+  return value === '' ? undefined : value;
+};
+
 export const readConfig = (env: NodeJS.ProcessEnv): HttpConfig => ({
-  linkSecret: env['INVOICE_LINK_SECRET'] === '' ? undefined : env['INVOICE_LINK_SECRET'],
+  linkSecret: readVariable(env, 'INVOICE_LINK_SECRET'),
+  publicUrl: readVariable(env, 'PUBLIC_URL')?.replace(/\/+$/, ''),
   now: () => new Date(),
 });
 

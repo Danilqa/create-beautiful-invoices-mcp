@@ -4,7 +4,7 @@ import { downloadInvoice } from './download-invoice';
 import { sealInvoice } from './invoice-link';
 
 const NOW = new Date('2026-11-21T12:00:00Z');
-const config = { linkSecret: 'test-secret', now: () => NOW };
+const config = { linkSecret: 'test-secret', publicUrl: undefined, now: () => NOW };
 
 const download = (query: string) =>
   downloadInvoice(new Request(`https://invoices.test/api/invoice${query}`), config);
@@ -47,6 +47,7 @@ describe('downloadInvoice', () => {
     await expect(
       downloadInvoice(new Request('https://invoices.test/api/invoice?token=x'), {
         linkSecret: undefined,
+        publicUrl: undefined,
         now: () => NOW,
       }),
     ).rejects.toThrow('INVOICE_LINK_SECRET is not set on the server.');

@@ -36,10 +36,10 @@ Then ask: _"Invoice Fabrikam for 7.5 hours of design review at £95.50 an hour, 
 
 ### ☁️ Hosted server
 
-Nothing to install: connect to `https://create-beautiful-invoices-mcp.vercel.app/api/mcp`.
+Nothing to install: connect to `https://www.nothing-fancy.space/invoice/api/mcp`.
 
 ```bash
-claude mcp add --transport http invoices https://create-beautiful-invoices-mcp.vercel.app/api/mcp
+claude mcp add --transport http invoices https://www.nothing-fancy.space/invoice/api/mcp
 ```
 
 In Claude.ai, ChatGPT and other apps, add it as a custom connector with the same URL.
