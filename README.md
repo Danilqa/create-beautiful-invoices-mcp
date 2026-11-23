@@ -6,7 +6,7 @@
 
 [Example](.github/assets/example-invoice.pdf), the one in front above.
 
-### Just want to use?
+## 🎠 Just want to use?
 
 Nothing to install: connect to `https://www.nothing-fancy.space/invoice/api/mcp`.
 
