@@ -2,13 +2,19 @@
 
 # create-beautiful-invoices-mcp
 
-> 🧾 An MCP server that creates beautiful, real PDF invoices. Ask your AI assistant for an invoice and get a PDF on disk.
+> 💸 An MCP server that creates beautiful, real PDF invoices. Ask your AI assistant for an invoice and get a PDF on disk.
 
-The invoices use the design of [sample-invoice-generator](https://github.com/Danilqa/sample-invoice-generator): a large amount due, the parties and dates, line items, totals with VAT and bank transfer details, set in Inter on A4.
+[Example](.github/assets/example-invoice.pdf), the one in front above.
 
-📄 [See an example invoice](.github/assets/example-invoice.pdf), the one in front above.
+## 🎠 Just want to use?
 
-## ⚡ Quickstart
+Nothing to install: connect to `https://www.nothing-fancy.space/invoice/api/mcp`.
+
+```bash
+claude mcp add --transport http invoices https://www.nothing-fancy.space/invoice/api/mcp
+```
+
+## ⚡ Or host and have your own?
 
 You need Node 24.
 
@@ -33,23 +39,6 @@ Claude Desktop, Cursor and other clients take the same command in their MCP conf
 ```
 
 Then ask: _"Invoice Fabrikam for 7.5 hours of design review at £95.50 an hour, with 20% VAT, due in 30 days."_
-
-### ☁️ Hosted server
-
-Nothing to install: connect to `https://www.nothing-fancy.space/invoice/api/mcp`.
-
-```bash
-claude mcp add --transport http invoices https://www.nothing-fancy.space/invoice/api/mcp
-```
-
-In Claude.ai, ChatGPT and other apps, add it as a custom connector with the same URL.
-
-The hosted server works like the local one, with these differences:
-
-- It returns a link to the PDF instead of saving a file. The link works for 30 days, and anyone who has it can open the invoice, so share it as you would the PDF.
-- It keeps no copy of the invoice. The link carries it, encrypted with a key only the server has.
-- It has no saved defaults and no logo, since both are files on your machine.
-- The issue date defaults to today in UTC.
 
 ## 🛠️ Tools
 
